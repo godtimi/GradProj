@@ -1,0 +1,9 @@
+name: 'oss-web'
+port: 8082
+
+oss:
+  key: "your-access-key-id"      # 填入您的AccessKey ID
+  secret: "your-access-key-secret"  # 填入您的AccessKey Secret
+  host: "your-bucket.oss-cn-region.aliyuncs.com"  # 填入您的OSS访问域名
+  callback_url: "http://your-domain:8082/callback"  # 填入您的回调URL
+  upload_dir: "upload/"  # 上传目录前缀 
