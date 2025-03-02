@@ -7,7 +7,7 @@ Go E-commerce Platform
 ## 配置说明
 
 1. OSS配置
-   - 复制示例配置文件：`cp back-end/mxshop-api/oss-web/config-example.yaml back-end/mxshop-api/oss-web/config.yaml`
+   - 复制示例配置文件：`cp back-end/yymall-api/oss-web/config-example.yaml back-end/yymall-api/oss-web/config.yaml`
    - 修改 `config.yaml` 中的配置信息：
      - 填入您的 AccessKey ID 和 Secret
      - 设置正确的 OSS bucket 访问域名
