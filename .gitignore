@@ -18,4 +18,19 @@ config-pro.yaml
 *.log
 
 # Environment variables
-.env 
+.env
+
+# 前端依赖和构建文件
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 临时文件
+.DS_Store
+.tmp/
+.temp/
+.cache/ 

@@ -126,17 +126,34 @@ start_api_gateway() {
 # 启动前端
 start_frontend() {
   echo -e "${YELLOW}启动前端...${NC}"
+  
+  # 启动后台管理系统
+  echo -e "${YELLOW}启动后台管理系统...${NC}"
   cd $PROJECT_ROOT/front-end/mall-master
   
   # 安装依赖
   if [ ! -d "node_modules" ]; then
-    echo -e "${YELLOW}安装前端依赖...${NC}"
+    echo -e "${YELLOW}安装后台管理系统依赖...${NC}"
     npm install
   fi
   
   # 启动开发服务器
-  nohup npm run dev > frontend.log 2>&1 &
-  echo $! > frontend.pid
+  nohup npm run dev > admin_frontend.log 2>&1 &
+  echo $! > admin_frontend.pid
+  
+  # 启动在线商城
+  echo -e "${YELLOW}启动在线商城...${NC}"
+  cd $PROJECT_ROOT/front-end/online-store
+  
+  # 安装依赖
+  if [ ! -d "node_modules" ]; then
+    echo -e "${YELLOW}安装在线商城依赖...${NC}"
+    npm install
+  fi
+  
+  # 启动开发服务器
+  nohup npm run dev > store_frontend.log 2>&1 &
+  echo $! > store_frontend.pid
   
   echo -e "${GREEN}前端启动成功${NC}"
 }
@@ -157,7 +174,8 @@ show_status() {
   echo -e "Consul UI: ${GREEN}http://localhost:8500${NC}"
   echo -e "Nacos UI: ${GREEN}http://localhost:8848/nacos${NC}"
   echo -e "Jaeger UI: ${GREEN}http://localhost:16686${NC}"
-  echo -e "前端应用: ${GREEN}http://localhost:8080${NC}"
+  echo -e "后台管理系统: ${GREEN}http://localhost:8080${NC}"
+  echo -e "在线商城: ${GREEN}http://localhost:8081${NC}"
 }
 
 # 停止所有服务
@@ -165,9 +183,14 @@ stop_services() {
   echo -e "${YELLOW}停止所有服务...${NC}"
   
   # 停止前端
-  if [ -f "$PROJECT_ROOT/front-end/mall-master/frontend.pid" ]; then
-    kill -9 $(cat $PROJECT_ROOT/front-end/mall-master/frontend.pid)
-    rm $PROJECT_ROOT/front-end/mall-master/frontend.pid
+  if [ -f "$PROJECT_ROOT/front-end/mall-master/admin_frontend.pid" ]; then
+    kill -9 $(cat $PROJECT_ROOT/front-end/mall-master/admin_frontend.pid)
+    rm $PROJECT_ROOT/front-end/mall-master/admin_frontend.pid
+  fi
+  
+  if [ -f "$PROJECT_ROOT/front-end/online-store/store_frontend.pid" ]; then
+    kill -9 $(cat $PROJECT_ROOT/front-end/online-store/store_frontend.pid)
+    rm $PROJECT_ROOT/front-end/online-store/store_frontend.pid
   fi
   
   # 停止API网关

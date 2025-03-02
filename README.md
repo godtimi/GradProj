@@ -3,7 +3,9 @@ Go E-commerce Platform
 
 ## 技术栈
 - 后端：Go 1.23.1
-- 前端：Vue 2.7.16 + Element UI 2.15.14
+- 前端：
+  - 后台管理系统：Vue 2.7.16 + Element UI 2.15.14
+  - 在线商城：Vue 2.7.16 + 原生CSS/SCSS
 - 数据库：MySQL, Redis
 - 微服务：gRPC, Consul
 
@@ -247,15 +249,15 @@ go run main.go
 
 ### 3. 启动前端
 ```bash
-# 安装依赖
+# 启动后台管理系统
 cd front-end/mall-master
 npm install
-
-# 开发模式启动
 npm run dev
 
-# 构建生产版本
-npm run build
+# 启动在线商城
+cd front-end/online-store
+npm install
+npm run dev
 ```
 
 ## 代码适配说明
