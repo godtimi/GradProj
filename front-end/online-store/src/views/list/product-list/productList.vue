@@ -169,7 +169,7 @@ canvas {
 
 a.productitem {
     display:block;
-+zoom:1;
+zoom:1;
     cursor:pointer;
     background-color:#fff;
     border:1px solid #eee;

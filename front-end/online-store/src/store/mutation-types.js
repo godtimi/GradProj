@@ -5,3 +5,6 @@ export const SET_NAV = 'SET_NAV';
 
 // 获取购物车数据
 export const SET_SHOPLIST = 'SET_SHOPLIST';
+
+// 用户登出
+export const LOGOUT = 'LOGOUT';

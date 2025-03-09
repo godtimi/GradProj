@@ -32,7 +32,7 @@ services:
 
   # Consul服务
   consul:
-    image: consul:1.16
+    image: consul:latest
     container_name: yymall-consul
     restart: always
     ports:
@@ -78,23 +78,23 @@ services:
       - yymall-network
       
   # Node.js开发环境（可选）
-  node:
-    image: node:18
-    container_name: yymall-node
-    volumes:
-      - ./front-end:/app
-    working_dir: /app
-    tty: true
-    networks:
-      - yymall-network
-    ports:
-      - "8080:8080"  # 后台管理系统端口
-      - "8081:8081"  # 在线商城端口
-    command: >
-      bash -c "echo '前端开发环境已准备就绪，可以通过以下命令启动项目：' &&
-               echo '启动后台管理系统: cd /app/mall-master && npm install && npm run dev' &&
-               echo '启动在线商城: cd /app/online-store && npm install && npm run dev' &&
-               tail -f /dev/null"
+  # node:
+  #   image: node:18
+  #   container_name: yymall-node
+  #   volumes:
+  #     - ./front-end:/app
+  #   working_dir: /app
+  #   tty: true
+  #   networks:
+  #     - yymall-network
+  #   ports:
+  #     - "8080:8080"  # 后台管理系统端口
+  #     - "8081:8081"  # 在线商城端口
+  #   command: >
+  #     bash -c "echo '前端开发环境已准备就绪，可以通过以下命令启动项目：' &&
+  #              echo '启动后台管理系统: cd /app/mall-master && npm install && npm run dev' &&
+  #              echo '启动在线商城: cd /app/online-store && npm install && npm run dev' &&
+  #              tail -f /dev/null"
 
 networks:
   yymall-network:

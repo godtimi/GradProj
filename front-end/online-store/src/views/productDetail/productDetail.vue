@@ -128,7 +128,7 @@ import currentLoc from './current-loc/current-loc';
 import hotSales from './hotSales';
 import model from './model'
 import { mapGetters } from 'vuex';
-import { getGoodsDetail, getFav, addFav, delFav, addShopCart,getShopCart,getCategory } from '../../api/api';
+import { getGoodsDetail, getFav, addFav, deleteFav, addShopCart,getShopCart,getCategory } from '../../api/api';
   export default {
     data () {
         return {
@@ -243,7 +243,7 @@ import { getGoodsDetail, getFav, addFav, delFav, addShopCart,getShopCart,getCate
 
         deleteCollect () {
             //删除收藏
-          delFav(this.productId).then((response)=> {
+          deleteFav(this.productId).then((response)=> {
             console.log(response.data);
             this.hasFav = false
           }).catch(function (error) {
@@ -661,7 +661,7 @@ import { getGoodsDetail, getFav, addFav, delFav, addShopCart,getShopCart,getCate
     border:1px solid #ddd;
     margin:0;
     margin-right:8px;
-    +zoom:1;
+    zoom:1;
     cursor:pointer;
     float:left;
     display:block

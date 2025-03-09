@@ -54,27 +54,40 @@
     }
 }
 </script>
-<style >
+<style>
+/* 修复CSS中的不兼容语法 */
+.sort{border-bottom:1px solid #eee;background:#f7f7f7}
+.sort .hd{height:24px;padding:5px 10px;line-height:24px;color:#333}
+.sort .bd{height:24px;padding:5px 0;line-height:24px;position:relative;z-index:1}
+.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;position:relative;z-index:1}
+.sort .bd a span{display:block;padding:5px 26px 5px 15px;background-position:right -128px;}
+.sort .bd a:hover{color:#e4393c;text-decoration:none}
+.sort .bd a:hover span{background-color:#fff;border-color:#e4393c;text-decoration:none}
+.sort .bd .curr span{background-color:#fff;border-color:#e4393c;color:#e4393c}
+.sort .bd .curr span{background-position:right -106px}
+.sort .bd .price span{background-position:right -152px}
+.sort .bd .price:hover span{background-position:right -128px}
+.sort .bd .price.curr span{background-position:right -175px}
 
 body,button,input {
-    font:12px/1.5 "Microsoft YaHei",Tahoma,Helvetica,Arial,simsun
+    font:12px/1.5 "Microsoft YaHei",Tahoma,Helvetica,Arial,simsun;
 }
 em,i {
-    font-style:normal
+    font-style:normal;
 }
 
 img {
-    border:0
+    border:0;
 }
 
 input,button {
     font-size:12px;
     outline:0;
     resize:none;
-    color:#333
+    color:#333;
 }
 button {
-    cursor:pointer
+    cursor:pointer;
 }
 
 .clear {
@@ -82,7 +95,7 @@ button {
     height:0;
     font-size:0;
     line-height:0;
-    overflow:hidden
+    overflow:hidden;
 }
 .cle:after {
     visibility:hidden;
@@ -90,16 +103,16 @@ button {
     font-size:0;
     content:'\20';
     clear:both;
-    height:0
+    height:0;
 }
 .cle {
-    *zoom:1
+    zoom:1;
 }
 .fl {
-    float:left
+    float:left;
 }
 .fr {
-    float:right
+    float:right;
 }
 a {
     text-decoration:none;
@@ -108,20 +121,20 @@ a {
     -moz-transition:color .2s;
     -o-transition:color .2s;
     -ms-transition:color .2s;
-    transition:color .2s
+    transition:color .2s;
 }
 a:hover {
-    color:#c81623
+    color:#c81623;
 }
 a:focus,area:focus {
-    outline:0
+    outline:0;
 }
 ::selection {
     background:#c81623;
-    color:#fff
+    color:#fff;
 }
 canvas {
-    -ms-touch-action:double-tap-zoom
+    -ms-touch-action:double-tap-zoom;
 }
 
 .sort {
@@ -133,27 +146,27 @@ canvas {
     background: #fff;
 }
 
-.sort .bd a span{background:url(./images/search-page-bg.png) 0 -9999px no-repeat}
+.sort .bd a span{background:url(./images/search-page-bg.png) 0 -9999px no-repeat;}
 
 
-.sort .bd{float:left;font-size:0;padding-right:12px}
-.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;+margin-right:-2px;position:relative;z-index:1}
-.sort .bd a span{display:block;padding:5px 26px 5px 15px;background-position:right -128px;+background-position:right -127px}
-.sort .curr .search_DESC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -104px;+background-position:right -102px;color:#c81623;text-shadow:1px 1px 1px #fff}
-.sort .curr .search_ASC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -330px;+background-position:right -328px;color:#c81623;text-shadow:1px 1px 1px #fff}
-.sort .bd a:hover{z-index:2;text-decoration:none}
-.sort .bd a.default span{background-image:none;padding-right:15px}
-.sort .bd a.promotion span{padding-right:15px;padding-left:30px;background-position:10px -153px}
-.sort .bd a.clicked span{background-position:10px -184px}
+.sort .bd{float:left;font-size:0;padding-right:12px;}
+.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;margin-right:-2px;position:relative;z-index:1;}
+.sort .bd a span{display:block;padding:5px 26px 5px 15px;background-position:right -128px;}
+.sort .curr .search_DESC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -104px;color:#c81623;text-shadow:1px 1px 1px #fff;}
+.sort .curr .search_ASC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -330px;color:#c81623;text-shadow:1px 1px 1px #fff;}
+.sort .bd a:hover{z-index:2;text-decoration:none;}
+.sort .bd a.default span{background-image:none;padding-right:15px;}
+.sort .bd a.promotion span{padding-right:15px;padding-left:30px;background-position:10px -153px;}
+.sort .bd a.clicked span{background-position:10px -184px;}
 
 
-.search_num{width:400px;float:right;text-align:right;line-height:30px;padding:0 15px}
-.search_num b{color:#c81623}
-.search_num span.search_btn{margin-left:10px;font-size:13px}
-.search_num span.search_btn a{display:inline-block;width:26px;height:26px;line-height:28px;text-align:center;border:1px solid #e4e4e4;background-color:#fff;margin:0 5px;color:#999}
-.search_num span.search_btn a:hover{border-color:#ccc;box-shadow:0 1px 1px #eee;text-decoration:none;color:#c81623}
-.search_num span.search_btn span{color:#333}
-.search_num span.search_btn span em{color:#c81623}
+.search_num{width:400px;float:right;text-align:right;line-height:30px;padding:0 15px;}
+.search_num b{color:#c81623;}
+.search_num span.search_btn{margin-left:10px;font-size:13px;}
+.search_num span.search_btn a{display:inline-block;width:26px;height:26px;line-height:28px;text-align:center;border:1px solid #e4e4e4;background-color:#fff;margin:0 5px;color:#999;}
+.search_num span.search_btn a:hover{border-color:#ccc;box-shadow:0 1px 1px #eee;text-decoration:none;color:#c81623;}
+.search_num span.search_btn span{color:#333;}
+.search_num span.search_btn span em{color:#c81623;}
 
 
 </style>

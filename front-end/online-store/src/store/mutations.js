@@ -9,12 +9,10 @@ Vue.prototype.$http = Axios
 
 
 export default {
-    [types.SET_INFO] (state) {
-        state.userInfo = {
-            name:cookie.getCookie('name'),
-            token:cookie.getCookie('token')
-        }
-        console.log(state.userInfo);
+    [types.SET_INFO] (state, info) {
+        state.userInfo = info;
+        state.login = true;
+        cookie.setCookie('token', info.token, 7);
     },
     [types.SET_SHOPLIST] (state) { //设置购物车数据
         // token = cookie.getCookie('token')
@@ -35,6 +33,15 @@ export default {
           });
         }
     },
-
-
+    [types.SET_NAV] (state, navList) {
+        state.navList = navList;
+    },
+    [types.SET_SHOPLIST] (state, shopList) {
+        state.shopList = shopList;
+    },
+    [types.LOGOUT] (state) {
+        state.userInfo = {};
+        state.login = false;
+        cookie.delCookie('token');
+    }
 }

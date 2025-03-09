@@ -1,19 +1,24 @@
 import axios from 'axios';
+import request from './request';
 
+// 统一配置API基础URL
+const API_BASE = process.env.NODE_ENV === 'production' 
+  ? 'http://192.168.134.157' 
+  : 'http://localhost';
 
-let host = 'http://shop.projectsedu.com';
-let goodsUrl = "http://124.223.201.78:8022/g"
-let orderUrl = "http://124.223.201.78:8023/o"
-let userUrl = "http://124.223.201.78:8021/u"
-let userOpUrl = "http://124.223.201.78:8027/up"
-export const ossUrl = "http://124.223.201.78:8029"
+// 各服务URL
+let goodsUrl = `${API_BASE}:8022/g`;
+let orderUrl = `${API_BASE}:8023/o`;
+let userUrl = `${API_BASE}:8021/u`;
+let userOpUrl = `${API_BASE}:8027/up`;
+export const ossUrl = `${API_BASE}:8029`;
 
 // let host = 'http://127.0.0.1:8000';
 
 //上传文件
 export const upload = (url,params) => { return axios.post(url,params) }
 //获取商品类别信息
-export const queryCategorygoods = params => { return axios.get(`${host}/indexgoods/`) }
+export const queryCategorygoods = params => { return axios.get(`${API_BASE}/indexgoods/`) }
 
 // //获取首页中的新品
 // export const newGoods = params => { return axios.get(`${host}/newgoods/`) }
@@ -33,12 +38,12 @@ export const getCategory = params => {
 
 
 //获取热门搜索关键词
-export const getHotSearch = params => { return axios.get(`${host}/hotsearchs`) }
+export const getHotSearch = params => { return axios.get(`${API_BASE}/hotsearchs`) }
 
 
 //获取验证码
 export function getCaptcha(params) {
-  return axios.get(userUrl+'/v1/base/captcha')
+  return axios.get(`${userUrl}/v1/base/captcha`)
 }
 //获取商品列表
 export const getGoods = params => { return axios.get(`${goodsUrl}/v1/goods`, { params: params }) }
@@ -59,7 +64,7 @@ export const deleteShopCart = goodsId => { return axios.delete(`${orderUrl}/v1/s
 export const addFav = params => { return axios.post(`${userOpUrl}/v1/userfavs`, params) }
 
 //取消收藏
-export const delFav = goodsId => { return axios.delete(`${userOpUrl}/v1/userfavs/`+goodsId) }
+export const deleteFav = goodsId => { return axios.delete(`${userOpUrl}/v1/userfavs/`+goodsId) }
 
 export const getAllFavs = () => { return axios.get(`${userOpUrl}/v1/userfavs`) }
 
@@ -68,7 +73,7 @@ export const getFav = goodsId => { return axios.get(`${userOpUrl}/v1/userfavs/`+
 
 //登录
 export const login = params => {
-  return axios.post(`${userUrl}/v1/user/pwd_login`, params)
+  return axios.post(`${userUrl}/v1/user/login`, params)
 }
 
 //注册
@@ -93,7 +98,7 @@ export const delOrder = orderId => { return axios.delete(`${orderUrl}/v1/orders/
 //添加订单
 export const createOrder = params => {return axios.post(`${orderUrl}/v1/orders`, params)}
 //获取订单详情
-export const getOrderDetail = orderId => {return axios.get(`${orderUrl}/v1/orders/`+orderId)}
+export const getOrderDetail = orderId => {return axios.get(`${orderUrl}/v1/orders/`+orderId+"/detail")}
 
 
 //获取留言

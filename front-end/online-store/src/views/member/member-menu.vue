@@ -87,7 +87,7 @@
     width:214px
 }
 .slidebar .slide_item {
-+zoom:1;
+zoom:1;
     border:1px solid #e7e7e7;
     border-bottom:0;
     margin-bottom:10px;

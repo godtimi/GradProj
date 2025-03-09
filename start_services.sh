@@ -20,6 +20,15 @@ start_docker_services() {
   echo -e "${GREEN}Docker容器服务启动成功${NC}"
   echo -e "${YELLOW}等待服务就绪...${NC}"
   sleep 10
+  
+  # 初始化 Nacos 配置
+  echo -e "${YELLOW}初始化 Nacos 配置...${NC}"
+  bash $PROJECT_ROOT/init-nacos-config.sh
+  if [ $? -ne 0 ]; then
+    echo -e "${RED}初始化 Nacos 配置失败${NC}"
+    exit 1
+  fi
+  echo -e "${GREEN}Nacos 配置初始化成功${NC}"
 }
 
 # 启动后端微服务
@@ -28,7 +37,7 @@ start_backend_services() {
   
   # 启动用户服务
   echo -e "${YELLOW}启动用户服务...${NC}"
-  cd $PROJECT_ROOT/back-end/yymall_srvs/user_srv
+  cd $PROJECT_ROOT/back-end/yymall-srvs/user_srv
   nohup go run main.go > user_srv.log 2>&1 &
   echo $! > user_srv.pid
   
@@ -37,7 +46,7 @@ start_backend_services() {
   
   # 启动商品服务
   echo -e "${YELLOW}启动商品服务...${NC}"
-  cd $PROJECT_ROOT/back-end/yymall_srvs/goods_srv
+  cd $PROJECT_ROOT/back-end/yymall-srvs/goods_srv
   nohup go run main.go > goods_srv.log 2>&1 &
   echo $! > goods_srv.pid
   
@@ -46,7 +55,7 @@ start_backend_services() {
   
   # 启动库存服务
   echo -e "${YELLOW}启动库存服务...${NC}"
-  cd $PROJECT_ROOT/back-end/yymall_srvs/inventory_srv
+  cd $PROJECT_ROOT/back-end/yymall-srvs/inventory_srv
   nohup go run main.go > inventory_srv.log 2>&1 &
   echo $! > inventory_srv.pid
   
@@ -55,7 +64,7 @@ start_backend_services() {
   
   # 启动订单服务
   echo -e "${YELLOW}启动订单服务...${NC}"
-  cd $PROJECT_ROOT/back-end/yymall_srvs/order_srv
+  cd $PROJECT_ROOT/back-end/yymall-srvs/order_srv
   nohup go run main.go > order_srv.log 2>&1 &
   echo $! > order_srv.pid
   
@@ -64,7 +73,7 @@ start_backend_services() {
   
   # 启动用户操作服务
   echo -e "${YELLOW}启动用户操作服务...${NC}"
-  cd $PROJECT_ROOT/back-end/yymall_srvs/userop_srv
+  cd $PROJECT_ROOT/back-end/yymall-srvs/userop_srv
   nohup go run main.go > userop_srv.log 2>&1 &
   echo $! > userop_srv.pid
   
@@ -127,6 +136,10 @@ start_api_gateway() {
 start_frontend() {
   echo -e "${YELLOW}启动前端...${NC}"
   
+  # 加载 NVM
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  
   # 启动后台管理系统
   echo -e "${YELLOW}启动后台管理系统...${NC}"
   cd $PROJECT_ROOT/front-end/mall-master
@@ -134,7 +147,7 @@ start_frontend() {
   # 安装依赖
   if [ ! -d "node_modules" ]; then
     echo -e "${YELLOW}安装后台管理系统依赖...${NC}"
-    npm install
+    npm install --legacy-peer-deps
   fi
   
   # 启动开发服务器
@@ -148,7 +161,7 @@ start_frontend() {
   # 安装依赖
   if [ ! -d "node_modules" ]; then
     echo -e "${YELLOW}安装在线商城依赖...${NC}"
-    npm install
+    npm install --legacy-peer-deps
   fi
   
   # 启动开发服务器
@@ -203,9 +216,9 @@ stop_services() {
   
   # 停止后端微服务
   for service in user goods inventory order userop; do
-    if [ -f "$PROJECT_ROOT/back-end/yymall_srvs/${service}_srv/${service}_srv.pid" ]; then
-      kill -9 $(cat $PROJECT_ROOT/back-end/yymall_srvs/${service}_srv/${service}_srv.pid)
-      rm $PROJECT_ROOT/back-end/yymall_srvs/${service}_srv/${service}_srv.pid
+    if [ -f "$PROJECT_ROOT/back-end/yymall-srvs/${service}_srv/${service}_srv.pid" ]; then
+      kill -9 $(cat $PROJECT_ROOT/back-end/yymall-srvs/${service}_srv/${service}_srv.pid)
+      rm $PROJECT_ROOT/back-end/yymall-srvs/${service}_srv/${service}_srv.pid
     fi
   done
   
@@ -215,33 +228,36 @@ stop_services() {
   echo -e "${GREEN}所有服务已停止${NC}"
 }
 
+# 启动所有服务
+start_services() {
+  start_docker_services
+  start_backend_services
+  start_api_gateway
+  start_frontend
+  show_status
+}
+
 # 主函数
 main() {
   case "$1" in
     start)
-      start_docker_services
-      start_backend_services
-      start_api_gateway
-      start_frontend
-      show_status
+      start_services
       ;;
     stop)
       stop_services
       ;;
     restart)
       stop_services
-      sleep 5
-      start_docker_services
-      start_backend_services
-      start_api_gateway
-      start_frontend
-      show_status
+      start_services
       ;;
     status)
       show_status
       ;;
+    start_docker)
+      start_docker_services
+      ;;
     *)
-      echo -e "用法: $0 {start|stop|restart|status}"
+      echo "用法: $0 {start|stop|restart|status|start_docker}"
       exit 1
       ;;
   esac

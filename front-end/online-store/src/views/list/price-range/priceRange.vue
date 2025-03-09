@@ -73,68 +73,32 @@ import clickoutside from '../../../static/js/clickoutside';
     }
 }
 </script>
-<style >
-
-.maincon{width:970px;float:right}
-.search-options{margin-bottom:12px;background-color:#fff}
-.search-options .bd{border:1px solid #eee;border-bottom:0;+zoom:1}
-.search-options dl{padding:10px 0;border-bottom:1px solid #eee;width:100%;position:relative}
-.search-options dt{position:absolute;top:10px;left:10px;font-size:14px}
-.search-options dd{position:relative;padding:0 50px 0 63px;height:24px;overflow:hidden;-webkit-transition:height .3s;-moz-transition:height .3s;-o-transition:height .3s;transition:height .3s}
-.search-options dd .items{padding-top:2px}
-.search-options dd .w500{width:500px}
-.search-options dd .items a{color:#666}
-.search-options dd .items a:hover{color:#c81623}
-.search-options dd .link{float:left;width:162px;height:18px;margin:0 10px 8px 0;overflow:hidden}
-.search-options dd.dd-price .link{width:102px}
-.search-options dd a.more-btn{position:absolute;top:3px;right:5px;margin-right:0;padding:0 20px 0 0;background-position:30px -381px;display:none;color:#c81623}
-.search-options dd a.more-btn.clicked{background-position:30px -359px}
-.search-options dd a.more-btn:hover{background-color:#fff;text-decoration:underline}
-.search-options dd.dd-price{overflow:visible;z-index:10}
-
-/*.bd a span{background:url(images/search-page-bg.png) 0 -9999px no-repeat}*/
-/*.bd {*/
-    /*padding:0 0 6px 14px;*/
-    /*margin-right:-10px;*/
-    /*height:43px;*/
-    /*overflow:hidden*/
-/*}*/
-/*.main_cata li .bd a {*/
-    /*color:#999;*/
-    /*display:inline-block;*/
-    /*margin-right:14px;*/
-    /*line-height:22px*/
-/*}*/
-
-.priceform{position:absolute;top:-11px;left:500px;z-index:10}
-.priceform .form-bg{width:270px;border:1px solid #fff;border-top-color:#eee;padding:8px 15px;+padding-bottom:7px;font-size:0}
-.priceform input{font-size:12px;border:1px solid #eaeaea;padding:3px;height:18px;width:60px;line-height:18px}
-.priceform input.submit{text-align: center;margin-left: 20px;height:26px;padding:0;line-height:16px;cursor:pointer;background-color:#eaeaea;width:68px;border-color:#e1e1e1;background-color:#eaeaea;background-image:-moz-linear-gradient(#fefefe,#eaeaea);background-image:-webkit-linear-gradient(#fefefe,#eaeaea);background-image:linear-gradient(#fefefe,#eaeaea)}
-.priceform input.submit:hover{background-color:#e4e4e4}
-.priceform span{height:26px;width:12px;display:inline-block;vertical-align:-9px;+vertical-align:-1px;font-size:12px}
-.priceform span.rmb{background-position:-10px -272px}
-.priceform span.rmb2{padding-left:20px;background-position:8px -272px}
-/*.priceform form p{display:none;text-align:right;padding-top:4px}*/
-.priceform form p{text-align:right;padding-top:4px}
-#priceform.focus .form-bg{background-color:#f6f6f6;border-color:#e4e4e4;height:28px;box-shadow:0 1px 3px rgba(100,100,100,0.1)}
-#priceform.focus form p{display:inline;padding-left:15px}
-a.more-btn,.rmb,.search-selected a.item,.sort .bd a span{background:url(./images/search-page-bg.png) 0 -9999px no-repeat}
-
-
-
-
-
-
-
-
-.sort .bd{float:left;font-size:0;padding-right:12px}
-.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;+margin-right:-2px;position:relative;z-index:1}
-.sort .bd a span{display:block;padding:5px 26px 5px 15px;background-position:right -128px;+background-position:right -127px}
-.sort .curr .search_DESC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -104px;+background-position:right -102px;color:#c81623;text-shadow:1px 1px 1px #fff}
-.sort .curr .search_ASC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -330px;+background-position:right -328px;color:#c81623;text-shadow:1px 1px 1px #fff}
-.sort .bd a:hover{z-index:2;text-decoration:none}
-.sort .bd a.default span{background-image:none;padding-right:15px}
-.sort .bd a.promotion span{padding-right:15px;padding-left:30px;background-position:10px -153px}
-.sort .bd a.clicked span{background-position:10px -184px}
-
+<style>
+/* 修复CSS中的不兼容语法 */
+.search-options{margin-bottom:10px}
+.search-options .bd{border:1px solid #eee;border-bottom:0;zoom:1}
+.search-options .list{overflow:hidden;padding:4px 0 0;zoom:1}
+.search-options dl{border-top:1px dotted #ccc;overflow:hidden;zoom:1}
+.search-options dt{float:left;width:100px;font-weight:700;text-align:right;padding:10px 0}
+.search-options dd{float:left;width:620px;padding:5px 0}
+.search-options dd .search-option{float:left;width:148px;height:18px;padding:3px 0 2px;overflow:hidden;margin-right:5px;display:inline}
+.search-options dd .search-option label{display:block;float:left;height:18px;padding:0 5px 0 0;overflow:hidden;line-height:18px}
+.search-options dd .search-option:hover{background:#e4393c;color:#fff}
+.search-options dd .search-option:hover a{color:#fff}
+.search-options dd .search-option input{float:left;margin:3px 3px 0 0;display:inline}
+.search-options dd .search-option a{float:left;white-space:nowrap;overflow:hidden}
+.search-options dd .search-option a:hover{color:#fff}
+.search-options dd a{color:#005aa0}
+.search-options dd a:hover{color:#e4393c}
+.search-options-more{text-align:center;position:relative;top:-1px;border-style:solid;border-width:0 1px 1px;border-color:#ddd;background:#f7f7f7}
+.search-options-more a{color:#333;padding:0 15px 0 0;position:relative;margin-right:15px;height:24px;line-height:24px;background:url(//misc.360buyimg.com/product/search/1.0.7/css/i/search.ele.png) no-repeat 9999px 9999px;background-position:right -360px;display:inline-block}
+.search-options-more a:hover{color:#e4393c}
+.search-options-more a.close{background-position:right -381px}
+.priceform{overflow:hidden;margin-top:5px;padding-left:3px;float:left}
+.priceform .form-bg{width:270px;border:1px solid #fff;border-top-color:#eee;padding:8px 15px;padding-bottom:7px;font-size:0}
+.priceform .form-bg:hover{border-color:#e4393c;border-top-color:#e4393c;background:#fff}
+.priceform .form-bg input{width:60px;height:17px;border:1px solid #ccc;padding:1px;font:12px/17px verdana;overflow:hidden}
+.priceform .form-bg span{padding:0 6px;font-size:12px;display:inline-block;vertical-align:middle}
+.priceform .form-bg button{background:#f7f7f7;color:#333;border-radius:2px;text-align:center;text-decoration:none;cursor:pointer;border:1px solid #ddd;padding:4px 13px 5px;display:inline-block;vertical-align:middle;font-size:12px;margin-left:15px}
+.priceform .form-bg button:hover{background:#f3f3f3}
 </style>

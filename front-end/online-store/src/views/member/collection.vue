@@ -61,7 +61,7 @@
   </div>
 </template>
 <script>
-  import {getAllFavs, delFav} from '../../api/api'
+  import {getAllFavs, deleteFav} from '../../api/api'
     export default {
         data () {
             return {
@@ -135,16 +135,25 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
-
-
             },
             deletePro (index, id) { //删除收藏商品
-                alert('您确定要从收藏夹中删除选定的商品吗？');
-                delFav(id).then((response)=> {
-                    this.collections.splice(index,1);
-                    alert('已删除商品');
-                }).catch(function (error) {
-                    console.log(error);
+                this.$confirm('确认取消收藏该商品吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    deleteFav(id).then(response => {
+                        this.$message({
+                            type: 'success',
+                            message: '取消收藏成功!'
+                        });
+                        this.collections.splice(index, 1);
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消操作'
+                    });          
                 });
             }
         }

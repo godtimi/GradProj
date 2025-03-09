@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'bundle.[contenthash].js',
     publicPath: '/'
   },
   module: {
@@ -32,17 +32,24 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
-              implementation: require('sass')
+              implementation: require('sass'),
+              sassOptions: {
+                indentedSyntax: false
+              }
             }
           }
         ]
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: '[name].[ext]?[hash]'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024 // 10kb
+          }
+        },
+        generator: {
+          filename: 'images/[name].[hash:8][ext]'
         }
       }
     ]
@@ -57,19 +64,34 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
-      template: './index.html'
+      template: './index.html',
+      filename: 'index.html',
+      title: '慕学生鲜-首页'
     }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+      }
     })
   ],
   devServer: {
     historyApiFallback: true,
-    port: 8089,
+    port: 8081,
     hot: true,
     static: {
       directory: path.join(__dirname, 'public')
-    }
+    },
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://192.168.134.157:8022',
+        pathRewrite: {'^/api': ''},
+        changeOrigin: true
+      }
+    ]
   }
 };

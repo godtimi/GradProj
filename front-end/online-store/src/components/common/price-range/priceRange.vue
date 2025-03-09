@@ -153,7 +153,7 @@ canvas {
 }
 .maincon{width:970px;float:right}
 .search-options{margin-bottom:12px;background-color:#fff}
-.search-options .bd{border:1px solid #eee;border-bottom:0;+zoom:1}
+.search-options .bd{border:1px solid #eee;border-bottom:0;zoom:1;}
 .search-options dl{padding:10px 0;border-bottom:1px solid #eee;width:100%;position:relative}
 .search-options dt{position:absolute;top:10px;left:10px;font-size:14px}
 .search-options dd{position:relative;padding:0 50px 0 63px;height:24px;overflow:hidden;-webkit-transition:height .3s;-moz-transition:height .3s;-o-transition:height .3s;transition:height .3s}
@@ -203,7 +203,7 @@ a.more-btn,.rmb,.search-selected a.item,.sort .bd a span{background:url(./images
 
 
 .sort .bd{float:left;font-size:0;padding-right:12px}
-.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;+margin-right:-2px;position:relative;z-index:1}
+.sort .bd a{display:inline-block;font-size:12px;margin-right:-1px;margin-right:-2px;position:relative;z-index:1}
 .sort .bd a span{display:block;padding:5px 26px 5px 15px;background-position:right -128px;+background-position:right -127px}
 .sort .curr .search_DESC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -104px;+background-position:right -102px;color:#c81623;text-shadow:1px 1px 1px #fff}
 .sort .curr .search_ASC{border:1px solid #fff;padding:4px 26px 4px 15px;background-position:right -330px;+background-position:right -328px;color:#c81623;text-shadow:1px 1px 1px #fff}
