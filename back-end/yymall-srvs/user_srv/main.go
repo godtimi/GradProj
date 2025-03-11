@@ -3,30 +3,36 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
+	"yymall_srvs/user_srv/global"
+	"yymall_srvs/user_srv/handler"
+	"yymall_srvs/user_srv/initialize"
+	"yymall_srvs/user_srv/proto"
+	"yymall_srvs/user_srv/utils"
+
 	"github.com/hashicorp/consul/api"
 	"github.com/nacos-group/nacos-sdk-go/inner/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"yymall_srvs/user_srv/global"
-	"yymall_srvs/user_srv/handler"
-	"yymall_srvs/user_srv/initialize"
-	"yymall_srvs/user_srv/proto"
-	"yymall_srvs/user_srv/utils"
-	"net"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
 	IP := flag.String("ip", "0.0.0.0", "ip地址")
 	Port := flag.Int("port", 0, "端口号")
+	Debug := flag.Bool("debug", true, "是否使用debug模式")
 
 	//初始化
 	initialize.InitLogger()
-	initialize.InitConfig()
+	if *Debug {
+		initialize.InitConfig("config-debug.yaml")
+	} else {
+		initialize.InitConfig("config-pro.yaml")
+	}
 	initialize.InitDB()
 	zap.S().Info(global.ServerConfig)
 
@@ -57,9 +63,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// 获取本机IP
+	localIP := "192.168.134.157" // 这里使用实际的服务器IP
+
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("192.168.134.157:%d", *Port),
+		GRPC:                           fmt.Sprintf("%s:%d", localIP, *Port),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -77,7 +87,7 @@ func main() {
 	registration.ID = serviceID
 	registration.Port = *Port
 	registration.Tags = []string{"yymall", "user", "srv"}
-	registration.Address = "192.168.134.157"
+	registration.Address = localIP
 	registration.Check = check
 
 	err = client.Agent().ServiceRegister(registration)

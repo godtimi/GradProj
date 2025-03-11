@@ -1,28 +1,32 @@
 package initialize
 
 import (
+	"fmt"
 	"log"
-	"yymall_srvs/user_srv/global"
 	"os"
 	"time"
-	"fmt"
+	"yymall_srvs/user_srv/global"
 
+	"go.uber.org/zap"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"gorm.io/driver/mysql"
 )
 
-func InitDB(){
+func InitDB() {
 	c := global.ServerConfig.MysqlInfo
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		c.User, c.Password, c.Host, c.Port, c.Name)
+
+	zap.S().Infof("数据库连接串: %s", dsn)
+
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
-			SlowThreshold: time.Second,   // 慢 SQL 阈值
-			LogLevel:      logger.Silent, // Log level
-			Colorful:      true,         // 禁用彩色打印
+			SlowThreshold: time.Second, // 慢 SQL 阈值
+			LogLevel:      logger.Info, // Log level
+			Colorful:      true,        // 启用彩色打印
 		},
 	)
 
@@ -35,6 +39,8 @@ func InitDB(){
 		Logger: newLogger,
 	})
 	if err != nil {
+		zap.S().Errorf("连接数据库失败: %s", err.Error())
 		panic(err)
 	}
+	zap.S().Info("数据库连接成功！")
 }
