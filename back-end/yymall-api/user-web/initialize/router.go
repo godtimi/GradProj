@@ -13,6 +13,7 @@ import (
 func Routers() *gin.Engine {
 	Router := gin.Default()
 	Router.GET("/health", func(c *gin.Context) {
+		zap.S().Info("Health check received")
 		c.JSON(http.StatusOK, gin.H{
 			"code":    http.StatusOK,
 			"success": true,

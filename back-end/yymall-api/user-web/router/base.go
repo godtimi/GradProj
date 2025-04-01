@@ -2,14 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"yymall-api/user-web/api"
 )
 
-func InitBaseRouter(Router *gin.RouterGroup){
-	BaseRouter := Router.Group("base")
-	{
-		BaseRouter.GET("captcha", api.GetCaptcha)
-		BaseRouter.POST("send_sms", api.SendSms)
-	}
-
+func InitBaseRouter(Router *gin.RouterGroup) {
+	// 基础路由
 }

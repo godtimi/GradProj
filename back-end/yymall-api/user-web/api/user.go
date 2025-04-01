@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,7 +10,6 @@ import (
 	"yymall-api/user-web/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/gin-gonic/gin"
@@ -129,13 +127,6 @@ func PassWordLogin(c *gin.Context) {
 		return
 	}
 
-	if store.Verify(passwordLoginForm.CaptchaId, passwordLoginForm.Captcha, false) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"captcha": "验证码错误",
-		})
-		return
-	}
-
 	//登录的逻辑
 	if rsp, err := global.UserSrvClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
 		Mobile: passwordLoginForm.Mobile,
@@ -200,30 +191,18 @@ func PassWordLogin(c *gin.Context) {
 }
 
 func Register(c *gin.Context) {
-	//用户注册
 	registerForm := forms.RegisterForm{}
 	if err := c.ShouldBind(&registerForm); err != nil {
 		HandleValidatorError(c, err)
 		return
 	}
 
-	//验证码
-	rdb := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port),
-	})
-	value, err := rdb.Get(context.Background(), registerForm.Mobile).Result()
-	if err == redis.Nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": "验证码错误",
+	//验证密码是否一致
+	if registerForm.PassWord != registerForm.ConfirmPassword {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"confirm_password": "两次密码不一致",
 		})
 		return
-	} else {
-		if value != registerForm.Code {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"code": "验证码错误",
-			})
-			return
-		}
 	}
 
 	user, err := global.UserSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
@@ -233,7 +212,7 @@ func Register(c *gin.Context) {
 	})
 
 	if err != nil {
-		zap.S().Errorf("[Register] 查询 【新建用户失败】失败: %s", err.Error())
+		zap.S().Errorf("[Register] 查询 【新建用户失败】失败: %v", err)
 		HandleGrpcErrorToHttp(err, c)
 		return
 	}

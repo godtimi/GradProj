@@ -75,7 +75,7 @@ func main() {
 
 	zap.S().Infof("启动服务器, 端口： %d", global.ServerConfig.Port)
 	go func() {
-		if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {
+		if err := Router.Run(fmt.Sprintf("0.0.0.0:%d", global.ServerConfig.Port)); err != nil {
 			zap.S().Errorf("启动失败: %s", err.Error())
 		}
 	}()

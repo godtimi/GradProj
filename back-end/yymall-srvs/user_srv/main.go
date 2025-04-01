@@ -60,7 +60,7 @@ func main() {
 
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("%s:%d", global.ServerConfig.Host, global.ServerConfig.Port),
+		GRPC:                           fmt.Sprintf("172.17.0.1:%d", global.ServerConfig.Port),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",

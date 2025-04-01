@@ -1,23 +1,7 @@
 version: '3.8'
 
 services:
-  # MySQL服务
-  mysql:
-    image: mysql:8.0
-    container_name: yymall-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: yymall_user
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
-    command: --default-authentication-plugin=mysql_native_password
-    networks:
-      - yymall-network
-
+ 
   # Redis服务
   redis:
     image: redis:6.2
@@ -35,12 +19,11 @@ services:
     image: consul:latest
     container_name: yymall-consul
     restart: always
+    network_mode: "host"
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
     ports:
       - "8500:8500"
       - "8600:8600/udp"
-    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
-    networks:
-      - yymall-network
 
   # Nacos服务
   nacos:
