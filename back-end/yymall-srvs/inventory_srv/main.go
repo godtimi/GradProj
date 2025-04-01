@@ -3,19 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/apache/rocketmq-client-go/v2"
-	"github.com/apache/rocketmq-client-go/v2/consumer"
-	"github.com/satori/go.uuid"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
-	"yymall_srvs/inventory_srv/handler"
-	"yymall_srvs/inventory_srv/utils/register/consul"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+	"yymall_srvs/inventory_srv/handler"
+	"yymall_srvs/inventory_srv/utils/register/consul"
+
+	"github.com/apache/rocketmq-client-go/v2"
+	"github.com/apache/rocketmq-client-go/v2/consumer"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"yymall_srvs/inventory_srv/global"
 	"yymall_srvs/inventory_srv/initialize"
@@ -35,7 +36,7 @@ func main() {
 
 	flag.Parse()
 	zap.S().Info("ip: ", *IP)
-	if *Port == 0{
+	if *Port == 0 {
 		*Port, _ = utils.GetFreePort()
 	}
 
@@ -60,7 +61,7 @@ func main() {
 
 	//服务注册
 	register_client := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	serviceId := fmt.Sprintf("%s", uuid.New())
 	err = register_client.Register(global.ServerConfig.Host, *Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceId)
 	if err != nil {
 		zap.S().Panic("服务注册失败:", err.Error())
@@ -73,7 +74,7 @@ func main() {
 		consumer.WithGroupName("mxshop-inventory"),
 	)
 
-	if err := c.Subscribe("order_reback", consumer.MessageSelector{},handler.AutoReback); err != nil {
+	if err := c.Subscribe("order_reback", consumer.MessageSelector{}, handler.AutoReback); err != nil {
 		fmt.Println("读取消息失败")
 	}
 	_ = c.Start()
@@ -86,7 +87,7 @@ func main() {
 	_ = c.Shutdown()
 	if err = register_client.DeRegister(serviceId); err != nil {
 		zap.S().Info("注销失败:", err.Error())
-	}else{
+	} else {
 		zap.S().Info("注销成功:")
 	}
 }

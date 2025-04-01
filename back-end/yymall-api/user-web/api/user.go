@@ -3,15 +3,16 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/go-playground/validator/v10"
-	"github.com/go-redis/redis/v8"
-	"yymall-api/user-web/middlewares"
-	"yymall-api/user-web/models"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+	"yymall-api/user-web/middlewares"
+	"yymall-api/user-web/models"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/go-redis/redis/v8"
+	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -169,9 +170,9 @@ func PassWordLogin(c *gin.Context) {
 					ID:          uint(rsp.Id),
 					NickName:    rsp.NickName,
 					AuthorityId: uint(rsp.Role),
-					StandardClaims: jwt.StandardClaims{
-						NotBefore: time.Now().Unix(),               //签名的生效时间
-						ExpiresAt: time.Now().Unix() + 60*60*24*30, //30天过期
+					RegisteredClaims: jwt.RegisteredClaims{
+						NotBefore: jwt.NewNumericDate(time.Now()),
+						ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 30 * time.Hour)),
 						Issuer:    "imooc",
 					},
 				}
@@ -242,9 +243,9 @@ func Register(c *gin.Context) {
 		ID:          uint(user.Id),
 		NickName:    user.NickName,
 		AuthorityId: uint(user.Role),
-		StandardClaims: jwt.StandardClaims{
-			NotBefore: time.Now().Unix(),               //签名的生效时间
-			ExpiresAt: time.Now().Unix() + 60*60*24*30, //30天过期
+		RegisteredClaims: jwt.RegisteredClaims{
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 30 * time.Hour)),
 			Issuer:    "imooc",
 		},
 	}

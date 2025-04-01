@@ -8,17 +8,18 @@ import (
 	"os/signal"
 	"syscall"
 
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"github.com/satori/go.uuid"
 
+	"yymall_srvs/goods_srv/global"
 	"yymall_srvs/goods_srv/handler"
 	"yymall_srvs/goods_srv/initialize"
 	"yymall_srvs/goods_srv/proto"
-	"yymall_srvs/goods_srv/global"
 	"yymall_srvs/goods_srv/utils"
+
 	"github.com/hashicorp/consul/api"
 )
 
@@ -35,7 +36,7 @@ func main() {
 
 	flag.Parse()
 	zap.S().Info("ip: ", *IP)
-	if *Port == 0{
+	if *Port == 0 {
 		*Port, _ = utils.GetFreePort()
 	}
 
@@ -70,7 +71,7 @@ func main() {
 	//生成注册对象
 	registration := new(api.AgentServiceRegistration)
 	registration.Name = global.ServerConfig.Name
-	serviceID := fmt.Sprintf("%s", uuid.NewV4())
+	serviceID := fmt.Sprintf("%s", uuid.New())
 	registration.ID = serviceID
 	registration.Port = *Port
 	registration.Tags = global.ServerConfig.Tags
@@ -94,7 +95,7 @@ func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	if err = client.Agent().ServiceDeregister(serviceID); err != nil{
+	if err = client.Agent().ServiceDeregister(serviceID); err != nil {
 		zap.S().Info("注销失败")
 	}
 	zap.S().Info("注销成功")

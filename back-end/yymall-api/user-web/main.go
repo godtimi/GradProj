@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"yymall-api/user-web/utils/register/consul"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/google/uuid"
 
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
@@ -65,7 +65,7 @@ func main() {
 
 	//服务注册
 	register_client := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	serviceId := fmt.Sprintf("%s", uuid.New())
 	err := register_client.Register(global.ServerConfig.Host, global.ServerConfig.Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceId)
 	if err != nil {
 		zap.S().Errorf("服务注册失败: %s", err.Error())

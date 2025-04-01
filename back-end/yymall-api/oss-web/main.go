@@ -2,19 +2,20 @@ package main
 
 import (
 	"fmt"
-	"github.com/satori/go.uuid"
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"yymall-api/oss-web/global"
-	"yymall-api/oss-web/initialize"
-	"yymall-api/oss-web/utils/register/consul"
-	"yymall-api/oss-web/utils"
 	"os"
 	"os/signal"
 	"syscall"
+	"yymall-api/oss-web/global"
+	"yymall-api/oss-web/initialize"
+	"yymall-api/oss-web/utils"
+	"yymall-api/oss-web/utils/register/consul"
+
+	uuid "github.com/google/uuid"
+	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
-func main(){
+func main() {
 	//1. 初始化logger
 	initialize.InitLogger()
 
@@ -31,7 +32,7 @@ func main(){
 	viper.AutomaticEnv()
 	//如果是本地开发环境端口号固定，线上环境启动获取端口号
 	debug := viper.GetBool("MXSHOP_DEBUG")
-	if !debug{
+	if !debug {
 		port, err := utils.GetFreePort()
 		if err == nil {
 			global.ServerConfig.Port = port
@@ -40,7 +41,7 @@ func main(){
 
 	//服务注册
 	register_client := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	serviceId := fmt.Sprintf("%s", uuid.New())
 	err := register_client.Register(global.ServerConfig.Host, global.ServerConfig.Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceId)
 	if err != nil {
 		zap.S().Panic("服务注册失败:", err.Error())
@@ -52,8 +53,8 @@ func main(){
 		3. S函数和L函数很有用， 提供了一个全局的安全访问logger的途径
 	*/
 	zap.S().Debugf("启动服务器, 端口： %d", global.ServerConfig.Port)
-	go func(){
-		if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil{
+	go func() {
+		if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {
 			zap.S().Panic("启动失败:", err.Error())
 		}
 	}()
@@ -64,7 +65,7 @@ func main(){
 	<-quit
 	if err = register_client.DeRegister(serviceId); err != nil {
 		zap.S().Info("注销失败:", err.Error())
-	}else{
+	} else {
 		zap.S().Info("注销成功:")
 	}
 

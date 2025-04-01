@@ -19,7 +19,7 @@ func GetEnvInfo(env string) bool {
 	//刚才设置的环境变量 想要生效 我们必须得重启goland
 }
 
-func InitConfig(){
+func InitConfig() {
 	debug := GetEnvInfo("MXSHOP_DEBUG")
 	configFilePrefix := "config"
 	configFileName := fmt.Sprintf("userop-web/%s-pro.yaml", configFilePrefix)
@@ -43,18 +43,16 @@ func InitConfig(){
 	sc := []constant.ServerConfig{
 		{
 			IpAddr: global.NacosConfig.Host,
-			Port: global.NacosConfig.Port,
+			Port:   global.NacosConfig.Port,
 		},
 	}
 
-	cc := constant.ClientConfig {
+	cc := constant.ClientConfig{
 		NamespaceId:         global.NacosConfig.Namespace, // 如果需要支持多namespace，我们可以场景多个client,它们有不同的NamespaceId
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              "tmp/nacos/log",
 		CacheDir:            "tmp/nacos/cache",
-		RotateTime:          "1h",
-		MaxAge:              3,
 		LogLevel:            "debug",
 	}
 
@@ -76,7 +74,7 @@ func InitConfig(){
 	//fmt.Println(content) //字符串 - yaml
 	//想要将一个json字符串转换成struct，需要去设置这个struct的tag
 	err = json.Unmarshal([]byte(content), &global.ServerConfig)
-	if err != nil{
+	if err != nil {
 		zap.S().Fatalf("读取nacos配置失败： %s", err.Error())
 	}
 	fmt.Println(&global.ServerConfig)

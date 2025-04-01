@@ -12,14 +12,15 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"hash"
 	"io"
 	"io/ioutil"
-	"yymall-api/oss-web/global"
 	"net/http"
 	"strconv"
 	"time"
+	"yymall-api/oss-web/global"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 过期时间
@@ -40,24 +41,24 @@ func get_gmt_iso8601(expire_end int64) string {
 	return tokenExpire
 }
 
-type ConfigStruct struct{
-	Expiration string `json:"expiration"`
+type ConfigStruct struct {
+	Expiration string     `json:"expiration"`
 	Conditions [][]string `json:"conditions"`
 }
 
-type PolicyToken struct{
+type PolicyToken struct {
 	AccessKeyId string `json:"accessid"`
-	Host string `json:"host"`
-	Expire int64 `json:"expire"`
-	Signature string `json:"signature"`
-	Policy string `json:"policy"`
-	Directory string `json:"dir"`
-	Callback string `json:"callback"`
+	Host        string `json:"host"`
+	Expire      int64  `json:"expire"`
+	Signature   string `json:"signature"`
+	Policy      string `json:"policy"`
+	Directory   string `json:"dir"`
+	Callback    string `json:"callback"`
 }
 
-type CallbackParam struct{
-	CallbackUrl string `json:"callbackUrl"`
-	CallbackBody string `json:"callbackBody"`
+type CallbackParam struct {
+	CallbackUrl      string `json:"callbackUrl"`
+	CallbackBody     string `json:"callbackBody"`
 	CallbackBodyType string `json:"callbackBodyType"`
 }
 
@@ -76,17 +77,17 @@ func Get_policy_token() string {
 	config.Conditions = append(config.Conditions, condition)
 
 	//calculate signature
-	result,err:=json.Marshal(config)
+	result, err := json.Marshal(config)
 	debyte := base64.StdEncoding.EncodeToString(result)
-	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(global.ServerConfig.OssInfo.ApiSecret))
+	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(global.ServerConfig.OssInfo.ApiSecrect))
 	io.WriteString(h, debyte)
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
 	var callbackParam CallbackParam
-	callbackParam.CallbackUrl = global.ServerConfig.OssInfo.CallbackUrl
+	callbackParam.CallbackUrl = global.ServerConfig.OssInfo.CallBackUrl
 	callbackParam.CallbackBody = "filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}"
 	callbackParam.CallbackBodyType = "application/x-www-form-urlencoded"
-	callback_str,err:=json.Marshal(callbackParam)
+	callback_str, err := json.Marshal(callbackParam)
 	if err != nil {
 		fmt.Println("callback json err:", err)
 	}
@@ -100,7 +101,7 @@ func Get_policy_token() string {
 	policyToken.Directory = global.ServerConfig.OssInfo.UploadDir
 	policyToken.Policy = string(debyte)
 	policyToken.Callback = string(callbackBase64)
-	response,err:=json.Marshal(policyToken)
+	response, err := json.Marshal(policyToken)
 	if err != nil {
 		fmt.Println("json err:", err)
 	}
@@ -111,19 +112,19 @@ func Get_policy_token() string {
 func GetPublicKey(r *gin.Context) ([]byte, error) {
 	var bytePublicKey []byte
 	// get PublicKey URL
-	publicKeyURLBase64 :=r.GetHeader("x-oss-pub-key-url")
-	if (publicKeyURLBase64 == "") {
+	publicKeyURLBase64 := r.GetHeader("x-oss-pub-key-url")
+	if publicKeyURLBase64 == "" {
 		fmt.Println("GetPublicKey from Request header failed :  No x-oss-pub-key-url field. ")
 		return bytePublicKey, errors.New("no x-oss-pub-key-url field in Request header ")
 	}
 	publicKeyURL, _ := base64.StdEncoding.DecodeString(publicKeyURLBase64)
 	responsePublicKeyURL, err := http.Get(string(publicKeyURL))
-	if (err != nil) {
+	if err != nil {
 		fmt.Printf("Get PublicKey Content from URL failed : %s \n", err.Error())
 		return bytePublicKey, err
 	}
 	bytePublicKey, err = ioutil.ReadAll(responsePublicKeyURL.Body)
-	if (err != nil) {
+	if err != nil {
 		fmt.Printf("Read PublicKey Content from URL failed : %s \n", err.Error())
 		return bytePublicKey, err
 	}
@@ -135,7 +136,7 @@ func GetPublicKey(r *gin.Context) ([]byte, error) {
 func GetAuthorization(ctx *gin.Context) ([]byte, error) {
 	var byteAuthorization []byte
 	strAuthorizationBase64 := ctx.GetHeader("authorization")
-	if (strAuthorizationBase64 == "") {
+	if strAuthorizationBase64 == "" {
 		fmt.Println("Failed to get authorization field from request header. ")
 		return byteAuthorization, errors.New("no authorization field in Request header")
 	}
@@ -146,23 +147,23 @@ func GetAuthorization(ctx *gin.Context) ([]byte, error) {
 // getMD5FromNewAuthString : Get MD5 bytes from Newly Constructed Authorization String.
 func GetMD5FromNewAuthString(ctx *gin.Context) ([]byte, string, error) {
 	var byteMD5 []byte
-	body,err := ioutil.ReadAll(ctx.Request.Body)
-	if (err != nil) {
+	body, err := ioutil.ReadAll(ctx.Request.Body)
+	if err != nil {
 		fmt.Printf("Read Request Body failed : %s \n", err.Error())
 		return byteMD5, "", err
 	}
 
 	strCallbackBody := string(body)
-	fmt.Println("---body/--- \r\n "+string(body))
+	fmt.Println("---body/--- \r\n " + string(body))
 
 	strURLPathDecode, errUnescape := unescapePath(ctx.Request.URL.Path, encodePathSegment)
-	if (errUnescape != nil) {
+	if errUnescape != nil {
 		fmt.Printf("url.PathUnescape failed : URL.Path=%s, error=%s \n", ctx.Request.URL.Path, err.Error())
-		return byteMD5,"", errUnescape
+		return byteMD5, "", errUnescape
 	}
 
 	strAuth := ""
-	if (ctx.Request.URL.RawQuery == "") {
+	if ctx.Request.URL.RawQuery == "" {
 		strAuth = fmt.Sprintf("%s\n%s", strURLPathDecode, strCallbackBody)
 	} else {
 		strAuth = fmt.Sprintf("%s?%s\n%s", strURLPathDecode, ctx.Request.URL.RawQuery, strCallbackBody)
@@ -177,7 +178,7 @@ func GetMD5FromNewAuthString(ctx *gin.Context) ([]byte, string, error) {
 
 func VerifySignature(bytePublicKey []byte, byteMd5 []byte, authorization []byte) bool {
 	pubBlock, _ := pem.Decode(bytePublicKey)
-	if (pubBlock == nil) {
+	if pubBlock == nil {
 		fmt.Printf("Failed to parse PEM block containing the public key")
 		return false
 	}
@@ -189,7 +190,7 @@ func VerifySignature(bytePublicKey []byte, byteMd5 []byte, authorization []byte)
 	pub := pubInterface.(*rsa.PublicKey)
 
 	errorVerifyPKCS1v15 := rsa.VerifyPKCS1v15(pub, crypto.MD5, byteMd5, authorization)
-	if (errorVerifyPKCS1v15 != nil) {
+	if errorVerifyPKCS1v15 != nil {
 		fmt.Printf("\nSignature Verification is Failed : %s \n", errorVerifyPKCS1v15.Error())
 		return false
 	}
@@ -212,16 +213,19 @@ func ResponseFailed(ctx *gin.Context) {
 }
 
 type EscapeError string
+
 func (e EscapeError) Error() string {
 	return "invalid URL escape " + strconv.Quote(string(e))
 }
 
 type InvalidHostError string
+
 func (e InvalidHostError) Error() string {
 	return "invalid character " + strconv.Quote(string(e)) + " in host name"
 }
 
 type encoding int
+
 const (
 	encodePath encoding = 1 + iota
 	encodePathSegment
@@ -357,4 +361,4 @@ func unhex(c byte) byte {
 		return c - 'A' + 10
 	}
 	return 0
-} 
+}

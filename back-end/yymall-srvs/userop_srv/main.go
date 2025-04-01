@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"yymall_srvs/userop_srv/handler"
-	"yymall_srvs/userop_srv/utils/register/consul"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+	"yymall_srvs/userop_srv/handler"
+	"yymall_srvs/userop_srv/utils/register/consul"
 
-	"github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -34,7 +34,7 @@ func main() {
 
 	flag.Parse()
 	zap.S().Info("ip: ", *IP)
-	if *Port == 0{
+	if *Port == 0 {
 		*Port, _ = utils.GetFreePort()
 	}
 
@@ -61,7 +61,7 @@ func main() {
 
 	//服务注册
 	register_client := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
-	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	serviceId := fmt.Sprintf("%s", uuid.New())
 	err = register_client.Register(global.ServerConfig.Host, *Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceId)
 	if err != nil {
 		zap.S().Panic("服务注册失败:", err.Error())
@@ -74,7 +74,7 @@ func main() {
 	<-quit
 	if err = register_client.DeRegister(serviceId); err != nil {
 		zap.S().Info("注销失败:", err.Error())
-	}else{
+	} else {
 		zap.S().Info("注销成功:")
 	}
 }

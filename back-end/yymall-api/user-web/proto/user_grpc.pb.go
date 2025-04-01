@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.3
-// source: user.proto
+// source: yymall-api/user-web/proto/user.proto
 
 package proto
 
@@ -308,5 +308,5 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "user.proto",
+	Metadata: "yymall-api/user-web/proto/user.proto",
 }
