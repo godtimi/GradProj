@@ -25,6 +25,25 @@ help:
 	@echo "  make docker            - 使用Docker Compose启动所有服务"
 	@echo "  make docker-build      - 构建所有Docker镜像"
 	@echo "  make clean             - 清理编译文件"
+	@echo "  make deps              - 下载所有依赖"
+
+# 下载所有依赖
+deps:
+	@echo "${GREEN}下载所有依赖...${NC}"
+	@export GOPROXY=https://goproxy.cn,direct
+	@echo "${YELLOW}下载微服务依赖...${NC}"
+	@cd $(CURDIR)/back-end/yymall-srvs && go mod tidy
+	@for service in $(SERVICES); do \
+		echo "${YELLOW}下载 $$service 服务依赖...${NC}"; \
+		cd $(CURDIR)/back-end/yymall-srvs/$${service}_srv && go mod tidy; \
+	done
+	@echo "${YELLOW}下载API网关依赖...${NC}"
+	@cd $(CURDIR)/back-end/yymall-api && go mod tidy
+	@for service in $(API_SERVICES); do \
+		echo "${YELLOW}下载 $$service 依赖...${NC}"; \
+		cd $(CURDIR)/back-end/yymall-api/$${service} && go mod tidy; \
+	done
+	@echo "${GREEN}所有依赖下载完成!${NC}"
 
 # 编译所有微服务
 build-all:
@@ -51,6 +70,7 @@ run-all:
 	@for service in $(SERVICES); do \
 		echo "${YELLOW}启动 $$service 服务...${NC}"; \
 		cd $(CURDIR)/back-end/yymall-srvs/$${service}_srv && \
+		export GOPROXY=https://goproxy.cn,direct && \
 		nohup go run main.go > $${service}.log 2>&1 & echo $$! > $${service}.pid; \
 	done
 	@echo "${GREEN}所有微服务已启动!${NC}"
@@ -63,6 +83,7 @@ run:
 	fi
 	@echo "${GREEN}启动 $(SERVICE) 服务...${NC}"
 	@cd $(CURDIR)/back-end/yymall-srvs/$(SERVICE)_srv && \
+	export GOPROXY=https://goproxy.cn,direct && \
 	nohup go run main.go > $(SERVICE).log 2>&1 & echo $$! > $(SERVICE).pid
 	@echo "${GREEN}$(SERVICE) 服务已启动!${NC}"
 
@@ -72,6 +93,7 @@ api-all:
 	@for service in $(API_SERVICES); do \
 		echo "${YELLOW}启动 $$service API...${NC}"; \
 		cd $(CURDIR)/back-end/yymall-api/$${service} && \
+		export GOPROXY=https://goproxy.cn,direct && \
 		nohup go run main.go > $${service}.log 2>&1 & echo $$! > $${service}.pid; \
 	done
 	@echo "${GREEN}所有API网关已启动!${NC}"
@@ -84,6 +106,7 @@ api:
 	fi
 	@echo "${GREEN}启动 $(SERVICE) API网关...${NC}"
 	@cd $(CURDIR)/back-end/yymall-api/$(SERVICE) && \
+	export GOPROXY=https://goproxy.cn,direct && \
 	nohup go run main.go > $(SERVICE).log 2>&1 & echo $$! > $(SERVICE).pid
 	@echo "${GREEN}$(SERVICE) API网关已启动!${NC}"
 

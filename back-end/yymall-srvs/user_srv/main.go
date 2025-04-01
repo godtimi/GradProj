@@ -11,7 +11,6 @@ import (
 	"yymall_srvs/user_srv/handler"
 	"yymall_srvs/user_srv/initialize"
 	"yymall_srvs/user_srv/proto"
-	"yymall_srvs/user_srv/utils"
 
 	"github.com/hashicorp/consul/api"
 	"github.com/nacos-group/nacos-sdk-go/inner/uuid"
@@ -22,9 +21,8 @@ import (
 )
 
 func main() {
-	IP := flag.String("ip", "0.0.0.0", "ip地址")
-	Port := flag.Int("port", 0, "端口号")
 	Debug := flag.Bool("debug", true, "是否使用debug模式")
+	flag.Parse()
 
 	//初始化
 	initialize.InitLogger()
@@ -37,16 +35,12 @@ func main() {
 	zap.S().Info(global.ServerConfig)
 
 	flag.Parse()
-	zap.S().Info("ip: ", *IP)
-	if *Port == 0 {
-		*Port, _ = utils.GetFreePort()
-	}
-
-	zap.S().Info("port: ", *Port)
+	zap.S().Info("host: ", global.ServerConfig.Host)
+	zap.S().Info("port: ", global.ServerConfig.Port)
 
 	server := grpc.NewServer()
 	proto.RegisterUserServer(server, &handler.UserServer{})
-	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", global.ServerConfig.Host, global.ServerConfig.Port))
 	if err != nil {
 		panic("failed to listen:" + err.Error())
 	}
@@ -64,12 +58,9 @@ func main() {
 		panic(err)
 	}
 
-	// 获取本机IP
-	localIP := "192.168.134.157" // 这里使用实际的服务器IP
-
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{
-		GRPC:                           fmt.Sprintf("%s:%d", localIP, *Port),
+		GRPC:                           fmt.Sprintf("%s:%d", global.ServerConfig.Host, global.ServerConfig.Port),
 		Timeout:                        "5s",
 		Interval:                       "5s",
 		DeregisterCriticalServiceAfter: "15s",
@@ -85,9 +76,9 @@ func main() {
 	serviceID := id.String()
 
 	registration.ID = serviceID
-	registration.Port = *Port
+	registration.Port = global.ServerConfig.Port
 	registration.Tags = []string{"yymall", "user", "srv"}
-	registration.Address = localIP
+	registration.Address = global.ServerConfig.Host
 	registration.Check = check
 
 	err = client.Agent().ServiceRegister(registration)
